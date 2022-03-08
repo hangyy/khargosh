@@ -1,31 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
-contract KhargoshFactory is Ownable {
+contract KhargoshBase {
     using SafeMath for uint256;
-    event NewKhargosh();
-    event NewBreedKhargosh();
 
     struct Khargosh {
         string name;
         uint256 dna;
     }
 
+    address feedToken = 0x123;
+    uint256 minFeed = 10;
     uint256 dnaDigits = 16;
     uint256 dnaModulus = 10**dnaDigits;
-
     Khargosh[] public khargoshs;
-    mapping(uint256 => address) public khargoshToOwner;
-    mapping(address => uint256) ownerKhargoshCount;
 
-    function _createKhargosh(string memory _name, uint256 _dna) internal {
-        uint256 id = khargoshs.push(Khargosh(_name, _dna)) - 1;
-        khargoshToOwner[id] = msg.sender;
-        ownerKhargoshCount[msg.sender] = ownerKhargoshCount[msg.sender].add(1);
-        emit NewKhargosh(id, _name, _dna);
+    function _createKhargosh(string memory _name, uint256 _dna)
+        internal
+        returns (new_id)
+    {
+        uint256 new_id = khargoshs.push(Khargosh(_name, _dna)) - 1;
     }
 
     /* 
@@ -40,10 +37,21 @@ contract KhargoshFactory is Ownable {
         return rand % dnaModulus;
     }
 
-    function createRandomKhargosh(string memory _name) public {
+    function _createRandomKhargosh(string memory _name) internal {
         require(ownerKhargoshCount[msg.sender] == 0);
         uint256 randDna = _generateRandomDna(_name);
         randDna = randDna - (randDna % 100);
         _createKhargosh(_name, randDna);
+    }
+
+    function _breedKhargosh(uint256 _khargoshId, string memory _name)
+        internal
+        returns (new_id)
+    {
+        IERC20(feedToken).transferFrom(msg.sender, address(this), minFeed);
+        Khargosh storage myKhargosh = khargoshs[_khargoshId];
+        uint256 randDna = _generateRandomDna(_name);
+        uint256 newDna = (myKhargosh.dna + randDna) / 2;
+        new_id = _createKhargosh(_name, newDna);
     }
 }
