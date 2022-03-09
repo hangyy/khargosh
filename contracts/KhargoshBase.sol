@@ -37,11 +37,13 @@ contract KhargoshBase {
         return rand % dnaModulus;
     }
 
-    function _createRandomKhargosh(string memory _name) internal {
-        require(ownerKhargoshCount[msg.sender] == 0);
+    function _createRandomKhargosh(string memory _name)
+        internal
+        returns (new_id)
+    {
         uint256 randDna = _generateRandomDna(_name);
         randDna = randDna - (randDna % 100);
-        _createKhargosh(_name, randDna);
+        new_id = _createKhargosh(_name, randDna);
     }
 
     function _breedKhargosh(uint256 _khargoshId, string memory _name)
