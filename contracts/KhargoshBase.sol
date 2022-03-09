@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
@@ -12,7 +12,7 @@ contract KhargoshBase {
         uint256 dna;
     }
 
-    address feedToken = 0x123;
+    address feedToken = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
     uint256 minFeed = 10;
     uint256 dnaDigits = 16;
     uint256 dnaModulus = 10**dnaDigits;
@@ -20,9 +20,10 @@ contract KhargoshBase {
 
     function _createKhargosh(string memory _name, uint256 _dna)
         internal
-        returns (new_id)
+        returns (uint256)
     {
-        uint256 new_id = khargoshs.push(Khargosh(_name, _dna)) - 1;
+        khargoshs.push(Khargosh(_name, _dna));
+        return khargoshs.length - 1;
     }
 
     /* 
@@ -39,21 +40,21 @@ contract KhargoshBase {
 
     function _createRandomKhargosh(string memory _name)
         internal
-        returns (new_id)
+        returns (uint256)
     {
         uint256 randDna = _generateRandomDna(_name);
         randDna = randDna - (randDna % 100);
-        new_id = _createKhargosh(_name, randDna);
+        return _createKhargosh(_name, randDna);
     }
 
     function _breedKhargosh(uint256 _khargoshId, string memory _name)
         internal
-        returns (new_id)
+        returns (uint256)
     {
         IERC20(feedToken).transferFrom(msg.sender, address(this), minFeed);
         Khargosh storage myKhargosh = khargoshs[_khargoshId];
         uint256 randDna = _generateRandomDna(_name);
         uint256 newDna = (myKhargosh.dna + randDna) / 2;
-        new_id = _createKhargosh(_name, newDna);
+        return _createKhargosh(_name, newDna);
     }
 }
