@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config({path:__dirname+'/.env'})
 
 /**
@@ -8,15 +9,25 @@ require('dotenv').config({path:__dirname+'/.env'})
 module.exports = {
   solidity: "0.8.1",
   networks: {
-    // ropsten: {
-    //   url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-    //   accounts: [`${ROPSTEN_PRIVATE_KEY}`]
-    // },
+    ropsten: {
+      url: `${process.env.ROPSTEN_URL}`,
+        accounts: [`${process.env.ROPSTEN_PRIVATE_KEY}`]
+    },
+    kovan: {
+      url: `${process.env.KOVAN_URL}`,
+        accounts: [`${process.env.KOVAN_PRIVATE_KEY}`]
+    },
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `${process.env.MAINNET_URL}`,
         accounts: [`${process.env.DEV_PRIVATE_KEY}`]
       }
+    }
+  },
+  etherscan: {
+    apiKey: {
+        kovan: `${process.env.ETHERSCAN_API_KEY}`,
+        ropsten: `${process.env.ETHERSCAN_API_KEY}`,
     }
   }
 };

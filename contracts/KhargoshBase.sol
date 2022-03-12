@@ -12,7 +12,7 @@ contract KhargoshBase {
         uint256 dna;
     }
 
-    address feedToken = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+    address feedToken;
     uint256 minFeed = 10;
     uint256 dnaDigits = 16;
     uint256 dnaModulus = 10**dnaDigits;

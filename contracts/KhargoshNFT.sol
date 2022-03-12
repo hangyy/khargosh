@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KhargoshBase.sol";
 
 contract KhargoshNFT is KhargoshBase, ERC721 {
-    constructor() ERC721("Khargosh", "KHA") {
-        // _baseTokenURI = "ipfs://xxx";
+    constructor(address _feedToken) ERC721("Khargosh", "KHA") {
+        feedToken = _feedToken;
     }
 
     modifier onlyOwnerOf(uint256 _khargoshId) {
